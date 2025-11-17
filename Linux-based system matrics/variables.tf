@@ -1,7 +1,7 @@
 variable "name_prefix" {
   description = "Name prefix used for tagging and resource names"
   type        = string
-  default     = "Madhuka-Test-Server"
+  default     = "Test-Server"
 }
 
 variable "aws_access_key" {
@@ -25,7 +25,7 @@ variable "aws_region" {
 variable "availability_zones" {
   description = "AZs to use (order matters). Provide at least 2 AZs for HA split."
   type        = list(string)
-  default     = ["us-east-1a", "us-east-1b"]
+  default     = ["ap-southeast-2a", "ap-southeast-2b"]
 }
 
 variable "vpc_cidr" {
@@ -44,6 +44,24 @@ variable "ami_id" {
   description = "AMI ID to use for the EC2 instance (provide manually)"
   type        = string
   default     = "ami-01361d3186814b895"
+}
+
+variable "root_volume_size" {
+  description = "Root EBS volume size in GB"
+  type        = number
+  default     = 30
+}
+
+variable "root_volume_type" {
+  description = "Root EBS volume type"
+  type        = string
+  default     = "gp3"
+}
+
+variable "delete_on_termination" {
+  description = "Whether to delete the root volume on termination"
+  type        = bool
+  default     = true
 }
 
 variable "public_subnet_01_cidr" {

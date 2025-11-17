@@ -34,6 +34,26 @@ else
 fi
 
 sudo groupadd docker
-sudo usermod -aG docker ${USER}
+sudo usermod -aG docker ubuntu
+newgrp docker
 docker run hello-world
 echo "Docker installation and setup completed successfully."
+
+# Create Docker network for monitoring containers
+docker network create monitoring || true
+
+# Run Grafana container
+docker run -d --name=grafana --network monitoring -p 3000:3000 grafana/grafana
+
+# Create Prometheus configuration file
+sudo tee /home/ubuntu/prometheus.yml > /dev/null <<EOF
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+EOF
+
+# Run Prometheus container
+docker run -d --name=prometheus --network monitoring -p 9090:9090 -v /home/ubuntu/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus

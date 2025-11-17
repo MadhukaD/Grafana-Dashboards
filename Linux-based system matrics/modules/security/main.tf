@@ -1,8 +1,8 @@
-# Security Group: allow SSH/HTTP/HTTPS inbound from anywhere IPv4, all outbound allowed
-resource "aws_security_group" "madhuka_sg" {
+# Security Group
+resource "aws_security_group" "test_server_sg" {
   name        = "${var.name_prefix}-sg"
-  description = "Allow SSH(22), HTTP(80), HTTPS(443) from anywhere IPv4; all outbound allowed"
-  vpc_id      = aws_vpc.main.id
+  description = "Allow SSH(22), HTTP(80), HTTPS(443), Grafana, Prometheus, Node Exporter"
+  vpc_id      = var.vpc_id
 
   ingress {
     description = "SSH from anywhere - IPv4"
@@ -45,7 +45,7 @@ resource "aws_security_group" "madhuka_sg" {
   }
 
   ingress {
-    description = "Node-Exporter"
+    description = "Node Exporter"
     from_port   = 9100
     to_port     = 9100
     protocol    = "tcp"
@@ -62,32 +62,32 @@ resource "aws_security_group" "madhuka_sg" {
 
   tags = {
     Name        = "${var.name_prefix}-sg"
-    Environment = "production"
+    Environment = "dev"
     Owner       = var.name_prefix
   }
 }
 
-# Generate RSA private key (4096) locally in Terraform
+# Generate SSH key
 resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
-# Create AWS key pair from the generated public key
+# Create AWS key pair
 resource "aws_key_pair" "generated_key" {
   key_name   = "${var.name_prefix}-key"
   public_key = tls_private_key.ssh_key.public_key_openssh
 
   tags = {
     Name        = "${var.name_prefix}-key"
-    Environment = "production"
+    Environment = "dev"
     Owner       = var.name_prefix
   }
 }
 
-# Save the private key to a local file (project root) - name_prefix.pem
+# Save the private key locally
 resource "local_file" "private_pem" {
-  content  = tls_private_key.ssh_key.private_key_pem
-  filename = "${var.name_prefix}.pem"
+  content         = tls_private_key.ssh_key.private_key_pem
+  filename        = "${var.name_prefix}.pem"
   file_permission = "0600"
 }

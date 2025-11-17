@@ -1,54 +1,54 @@
 output "vpc_id" {
   description = "VPC ID"
-  value       = aws_vpc.main.id
+  value       = module.vpc.vpc_id
 }
 
 output "public_subnet_01_id" {
   description = "Public subnet 01 ID"
-  value       = aws_subnet.public_subnet_01.id
+  value       = module.vpc.public_subnet_01_id
 }
 
 output "public_subnet_02_id" {
   description = "Public subnet 02 ID"
-  value       = aws_subnet.public_subnet_02.id
+  value       = module.vpc.public_subnet_02_id
 }
 
 output "private_subnet_01_id" {
   description = "Private subnet 01 ID"
-  value       = aws_subnet.private_subnet_01.id
+  value       = module.vpc.private_subnet_01_id
 }
 
 output "private_subnet_02_id" {
   description = "Private subnet 02 ID"
-  value       = aws_subnet.private_subnet_02.id
+  value       = module.vpc.private_subnet_02_id
 }
 
 output "internet_gateway_id" {
   description = "Internet Gateway ID"
-  value       = aws_internet_gateway.igw.id
+  value       = module.vpc.internet_gateway_id
 }
 
 output "nat_gateway_id" {
   description = "NAT Gateway ID"
-  value       = aws_nat_gateway.natgw.id
+  value       = module.vpc.nat_gateway_id
 }
 
 output "security_group_id" {
   description = "Security Group ID"
-  value       = aws_security_group.madhuka_sg.id
+  value       = module.security.security_group_id
 }
 
 output "ec2_instance_id" {
   description = "Instance ID"
-  value       = aws_instance.madhuka.id
+  value       = module.ec2.instance_id
 }
 
 output "ec2_public_ip" {
   description = "Instance public IP (use to SSH)"
-  value       = aws_instance.madhuka.public_ip
+  value       = module.ec2.public_ip
 }
 
 output "private_key_file" {
   description = "Local private key file saved by Terraform (use chmod 600 on this file before SSH)"
-  value       = local_file.private_pem.filename
+  value       = module.security.private_key_path
 }
