@@ -23,7 +23,7 @@ After the server is deployed, log into the server using the generated key file. 
 
 Note: The file must have necessary executable permissions for the user.
 
-### 3. Setup Prometheus and Grafana as Docker containers.
+### 3. Setup Prometheus, Grafana and Node Exporter as Docker containers.
 
 First create a Docker Network
 
@@ -59,7 +59,10 @@ global:
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['prometheus:9090']
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
 ```
 
 #### Install Prometheus as a Docker Container
@@ -74,3 +77,48 @@ Explanation for Docker command:
 Access Prometheus:
 
 Open a browser and go to http://<docker-host-ip>:9090 to access the Prometheus interface.
+
+#### Install Node-Exporter as a Docker Container
+
+Now we need to have the node exporter as a docker container. Node exporter is used to fetch the metrics of a linux-based system.
+
+```
+docker run -d --name node-exporter --network monitoring -p 9100:9100 prom/node-exporter
+```
+### 4. Setup the Data source
+
+1. **Log in to Grafana**
+   - Open your browser and go to: `http://<docker-host-ip>:3000`
+   - Enter your credentials to log in (Initially its admin for both username and password)
+
+2. **Navigate to Data Sources**
+   - Click the **gear icon (⚙️)** in the left sidebar
+   - Select **"Data Sources"**
+
+3. **Add a New Data Source**
+   - Click the **"Add data source"** button
+   - Choose **"Prometheus"** from the list
+
+4. **Configure Prometheus Settings in Connection section**
+   - **Prometheus server URL**: Enter the Prometheus server URL (e.g., `http://prometheus:9090`)
+
+5. **Test and Save**
+   - Click **"Test"** to verify the connection
+   - If successful, click **"Save & Test"**
+
+### 5. Import Prebuilt Dashboard
+
+1. **Create Dashboard**
+   - In the home page of Grafana, select **Create your first dashboard**
+
+2. **Import Dashboard**
+   - Click the **plus icon (+)** in the left sidebar
+   - Select **“Import”**
+   - Enter **Dashboard ID: `1860`** (Node Exporter Full)
+   - Click **“Load”**
+
+3. **Configure Data Source**
+   - Select your Prometheus data source
+   - Click **“Import”**
+
+4. **Save the Dashboard**

@@ -53,7 +53,13 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['prometheus:9090']
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
 EOF
 
 # Run Prometheus container
 docker run -d --name=prometheus --network monitoring -p 9090:9090 -v /home/ubuntu/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+
+# Run Node-Exporter container
+docker run -d --name node-exporter --network monitoring -p 9100:9100 prom/node-exporter
