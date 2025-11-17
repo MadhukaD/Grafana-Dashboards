@@ -5,22 +5,7 @@ I have provisioned the ubuntu server in AWS as an EC2 instance using Terraform.
 
 This project uses a module-based Terraform architecture to keep the infrastructure code clean, reusable, and easy to maintain. Each major AWS component is separated into its own module, allowing us to manage resources independently while keeping the root configuration simple and organized.
 
-├── main.tf
-├── variables.tf
-├── outputs.tf
-└── modules
-    ├── vpc
-    │   ├── main.tf
-    │   ├── variables.tf
-    │   └── outputs.tf
-    ├── security
-    │   ├── main.tf
-    │   ├── variables.tf
-    │   └── outputs.tf
-    └── ec2
-        ├── main.tf
-        ├── variables.tf
-        └── outputs.tf
+<img width="183" height="308" alt="image" src="https://github.com/user-attachments/assets/5141b1cd-63ab-42a1-8f39-e97c348b3d36" />
 
 ## Step by Step Guide
 ### 1. Provision the server
