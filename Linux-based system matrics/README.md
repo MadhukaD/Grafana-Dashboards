@@ -3,9 +3,28 @@ This repo contains Grafana dashboard I created to display system metrics such as
 
 I have provisioned the ubuntu server in AWS as an EC2 instance using Terraform. 
 
+This project uses a module-based Terraform architecture to keep the infrastructure code clean, reusable, and easy to maintain. Each major AWS component is separated into its own module, allowing us to manage resources independently while keeping the root configuration simple and organized.
+
+├── main.tf
+├── variables.tf
+├── outputs.tf
+└── modules
+    ├── vpc
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
+    ├── security
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
+    └── ec2
+        ├── main.tf
+        ├── variables.tf
+        └── outputs.tf
+
 ## Step by Step Guide
 ### 1. Provision the server
-FIrst, clone the project. You can have any region, CIDR block for VPC, subnets, AMI and other variables as you prefer.
+FIrst, clone the project. Then edit the variable.tf file in root directory with region, CIDR block for VPC, subnets, AMI and other variables as you prefer.
 
 Note: You must add your own access key and secret key in relevant variable blocks.
 
