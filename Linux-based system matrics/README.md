@@ -9,7 +9,7 @@ This project uses a module-based Terraform architecture to keep the infrastructu
 
 ## Step by Step Guide
 ### 1. Provision the server
-FIrst, clone the project. Then edit the variable.tf file in root directory with region, CIDR block for VPC, subnets, AMI and other variables as you prefer.
+FIrst, clone the project. Then edit the variables.tf file in root directory with region, CIDR block for VPC, subnets, AMI and other variables as you prefer.
 
 Note: You must add your own access key and secret key in relevant variable blocks.
 
