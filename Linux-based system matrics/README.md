@@ -5,11 +5,11 @@ I have provisioned the ubuntu server in AWS as an EC2 instance using Terraform.
 
 This project uses a module-based Terraform architecture to keep the infrastructure code clean, reusable, and easy to maintain. Each major AWS component is separated into its own module, allowing us to manage resources independently while keeping the root configuration simple and organized.
 
-<img width="183" height="308" alt="image" src="https://github.com/user-attachments/assets/5141b1cd-63ab-42a1-8f39-e97c348b3d36" />
+<img width="260" height="363" alt="image" src="https://github.com/user-attachments/assets/ef26bccb-dcc3-47a8-8d70-5fcf250528ab" />
 
 ## Step by Step Guide
 ### 1. Provision the server
-FIrst, clone the project. Then edit the variables.tf file in root directory with region, CIDR block for VPC, subnets, AMI and other variables as you prefer.
+First, clone the project. Then edit the variables.tf file in root directory with region, CIDR block for VPC, subnets, AMI and other variables as you prefer.
 
 Note: You must add your own access key and secret key in relevant variable blocks.
 
@@ -20,6 +20,33 @@ terraform init
 terraform plan
 terraform apply --auto-approve
 ```
+
+`install_docker_grafana_prom.sh` file will,
+- Update the packages
+- Install Docker
+- Add `ubuntu` user to `docker` group and refresh group membership without re-login
+- Deploy `grafana`, `prometheus` and `node-exporter` containers
+
+#### Explanation for Docker commands used in the script file
+**Grafana:**
+
+```
+docker run -d --name=grafana --network monitoring -p 3000:3000 grafana/grafana
+```
+
+Explanation for Docker command:
+
+- -d: Runs the container in detached mode, allowing it to run in the background.
+- --name=grafana: Names the container “grafana” for easier management.
+- -p 3000:3000: Maps port 3000 on the Docker host to port 3000 on the container, making Grafana accessible at http://server-ip:3000.
+
+**Prometheus:**
+```
+docker run -d --name=prometheus --network monitoring -p 9090:9090 -v /path/to/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+```
+Explanation for Docker command:
+
+- -v /path/to/prometheus.yml:/etc/prometheus/prometheus.yml: Mounts the configuration file from the host to the container.
 
 ### 2. Access Grafana and Prometheus
 
@@ -76,25 +103,3 @@ Open a browser and go to http://server-ip:9090 to access the Prometheus interfac
 
 4. **Save the Dashboard**
 <img width="1365" height="507" alt="Screenshot 2025-11-17 164050" src="https://github.com/user-attachments/assets/1cfbbee8-a303-4164-88cf-fa85e23d1a92" />
-
-### Docker commands explanation
-
-**Grafana:**
-
-```
-docker run -d --name=grafana --network monitoring -p 3000:3000 grafana/grafana
-```
-
-Explanation for Docker command:
-
-- -d: Runs the container in detached mode, allowing it to run in the background.
-- --name=grafana: Names the container “grafana” for easier management.
-- -p 3000:3000: Maps port 3000 on the Docker host to port 3000 on the container, making Grafana accessible at http://<docker-host-ip>:3000.
-
-**Prometheus:**
-```
-docker run -d --name=prometheus --network monitoring -p 9090:9090 -v /path/to/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
-```
-Explanation for Docker command:
-
-- -v /path/to/prometheus.yml:/etc/prometheus/prometheus.yml: Mounts the configuration file from the host to the container.
