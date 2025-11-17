@@ -5,7 +5,7 @@ I have provisioned the ubuntu server in AWS as an EC2 instance using Terraform.
 
 ## Step by Step Guide
 ### 1. Provision the server
-Deploy the server as an EC2 instance in your AWS account. You can have any region, CIDR block for VPC, subnets, AMI and other variables as you prefer.
+FIrst, clone the project. You can have any region, CIDR block for VPC, subnets, AMI and other variables as you prefer.
 
 Note: You must add your own access key and secret key in relevant variable blocks.
 
@@ -17,79 +17,26 @@ terraform plan
 terraform apply --auto-approve
 ```
 
-### 2. Install Docker
+### 2. Access Grafana and Prometheus
 
-After the server is deployed, log into the server using the generated key file. Then copy and execute the install_docker.sh file to install Docker on the server.
+#### 2.1 Access Grafana on Docker Host:
 
-Note: The file must have necessary executable permissions for the user.
-
-### 3. Setup Prometheus, Grafana and Node Exporter as Docker containers.
-
-First create a Docker Network
-
-```
-docker network create monitoring
-```
-
-#### Install Grafana as a Docker container
-
-```
-docker run -d --name=grafana --network monitoring -p 3000:3000 grafana/grafana
-```
-
-Explanation for Docker command:
-
--d: Runs the container in detached mode, allowing it to run in the background.
-
---name=grafana: Names the container “grafana” for easier management.
-
--p 3000:3000: Maps port 3000 on the Docker host to port 3000 on the container, making Grafana accessible at http://<docker-host-ip>:3000.
-
-Access Grafana on Docker Host:
-
-Open a browser and go to http://<docker-host-ip>:3000.
+Open a browser and go to http://server-ip:3000.
 Log in with the default credentials: Username: admin | Password: admin. (You’ll be prompted to change the password after logging in.)
 
-#### Create Prometheus configuration file
-Create a prometheus.yml configuration file on your Docker host, defining the scrape targets.
+<img width="1366" height="768" alt="Grafana_landingPage" src="https://github.com/user-attachments/assets/1ccb570d-0011-4e23-a388-af335babe86b" />
 
-```
-global:
-  scrape_interval: 15s
-scrape_configs:
-  - job_name: 'prometheus'
-    static_configs:
-      - targets: ['prometheus:9090']
-  - job_name: 'node-exporter'
-    static_configs:
-      - targets: ['node-exporter:9100']
-```
+#### 2.2 Access Prometheus:
 
-#### Install Prometheus as a Docker Container
+Open a browser and go to http://server-ip:9090 to access the Prometheus interface.
 
-```
-docker run -d --name=prometheus --network monitoring -p 9090:9090 -v /path/to/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
-```
-Explanation for Docker command:
+<img width="1366" height="768" alt="Prometheus_dashboard" src="https://github.com/user-attachments/assets/8a571a88-1dea-43d7-ad10-b076b63feaed" />
 
--v /path/to/prometheus.yml:/etc/prometheus/prometheus.yml: Mounts the configuration file from the host to the container.
-
-Access Prometheus:
-
-Open a browser and go to http://<docker-host-ip>:9090 to access the Prometheus interface.
-
-#### Install Node-Exporter as a Docker Container
-
-Now we need to have the node exporter as a docker container. Node exporter is used to fetch the metrics of a linux-based system.
-
-```
-docker run -d --name node-exporter --network monitoring -p 9100:9100 prom/node-exporter
-```
-### 4. Setup the Data source
+### 3. Setup the Data source
 
 1. **Log in to Grafana**
-   - Open your browser and go to: `http://<docker-host-ip>:3000`
-   - Enter your credentials to log in (Initially its admin for both username and password)
+   - Open your browser and go to: `http://server-ip:3000`
+   - Enter your credentials to log in
 
 2. **Navigate to Data Sources**
    - Click the **gear icon (⚙️)** in the left sidebar
@@ -101,12 +48,14 @@ docker run -d --name node-exporter --network monitoring -p 9100:9100 prom/node-e
 
 4. **Configure Prometheus Settings in Connection section**
    - **Prometheus server URL**: Enter the Prometheus server URL (e.g., `http://prometheus:9090`)
+  
+      <img width="701" height="136" alt="Screenshot 2025-11-17 163623" src="https://github.com/user-attachments/assets/7caddb2c-8c76-4849-be06-258ba4e4a734" />
 
 5. **Test and Save**
    - Click **"Test"** to verify the connection
    - If successful, click **"Save & Test"**
 
-### 5. Import Prebuilt Dashboard
+### 4. Import Prebuilt Dashboard
 
 1. **Create Dashboard**
    - In the home page of Grafana, select **Create your first dashboard**
@@ -122,3 +71,26 @@ docker run -d --name node-exporter --network monitoring -p 9100:9100 prom/node-e
    - Click **“Import”**
 
 4. **Save the Dashboard**
+<img width="1365" height="507" alt="Screenshot 2025-11-17 164050" src="https://github.com/user-attachments/assets/1cfbbee8-a303-4164-88cf-fa85e23d1a92" />
+
+### Docker commands explanation
+
+**Grafana:**
+
+```
+docker run -d --name=grafana --network monitoring -p 3000:3000 grafana/grafana
+```
+
+Explanation for Docker command:
+
+- -d: Runs the container in detached mode, allowing it to run in the background.
+- --name=grafana: Names the container “grafana” for easier management.
+- -p 3000:3000: Maps port 3000 on the Docker host to port 3000 on the container, making Grafana accessible at http://<docker-host-ip>:3000.
+
+**Prometheus:**
+```
+docker run -d --name=prometheus --network monitoring -p 9090:9090 -v /path/to/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+```
+Explanation for Docker command:
+
+- -v /path/to/prometheus.yml:/etc/prometheus/prometheus.yml: Mounts the configuration file from the host to the container.
